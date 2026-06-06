@@ -1,0 +1,37 @@
+{
+  "name": "BusStop",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome do ponto de \u00f4nibus"
+    },
+    "address": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "lines": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Linhas que passam por este ponto"
+    },
+    "has_shelter": {
+      "type": "boolean",
+      "default": false
+    },
+    "accessibility": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

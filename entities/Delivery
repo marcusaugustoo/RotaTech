@@ -1,0 +1,103 @@
+{
+  "name": "Delivery",
+  "type": "object",
+  "properties": {
+    "driver_email": {
+      "type": "string",
+      "description": "Email do motorista respons\u00e1vel"
+    },
+    "recipient_name": {
+      "type": "string",
+      "description": "Nome do destinat\u00e1rio"
+    },
+    "address": {
+      "type": "string",
+      "description": "Endere\u00e7o de entrega"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_transit",
+        "delivered",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "order_in_route": {
+      "type": "number",
+      "description": "Ordem na rota otimizada"
+    },
+    "estimated_time": {
+      "type": "string",
+      "description": "Tempo estimado de chegada"
+    },
+    "delivered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "package_weight": {
+      "type": "number"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "recipient_name",
+    "address"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.driver_email": "{{user.email}}"
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.driver_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.driver_email": "{{user.email}}"
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

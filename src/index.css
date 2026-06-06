@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-inter: 'Inter', sans-serif;
+    --background: 225 25% 6%;
+    --foreground: 220 20% 95%;
+    --card: 225 20% 10%;
+    --card-foreground: 220 20% 95%;
+    --popover: 225 20% 10%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 250 80% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 225 15% 16%;
+    --secondary-foreground: 220 20% 90%;
+    --muted: 225 15% 14%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 260 70% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 15% 18%;
+    --input: 225 15% 18%;
+    --ring: 250 80% 60%;
+    --chart-1: 250 80% 60%;
+    --chart-2: 260 70% 58%;
+    --chart-3: 170 70% 45%;
+    --chart-4: 280 70% 55%;
+    --chart-5: 330 70% 55%;
+    --radius: 0.75rem;
+    --sidebar-background: 225 20% 8%;
+    --sidebar-foreground: 220 20% 90%;
+    --sidebar-primary: 250 80% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 225 15% 14%;
+    --sidebar-accent-foreground: 220 20% 90%;
+    --sidebar-border: 225 15% 18%;
+    --sidebar-ring: 250 80% 60%;
+  }
+
+  .dark {
+    --background: 225 25% 6%;
+    --foreground: 220 20% 95%;
+    --card: 225 20% 10%;
+    --card-foreground: 220 20% 95%;
+    --popover: 225 20% 10%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 250 80% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 225 15% 16%;
+    --secondary-foreground: 220 20% 90%;
+    --muted: 225 15% 14%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 260 70% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 15% 18%;
+    --input: 225 15% 18%;
+    --ring: 250 80% 60%;
+    --chart-1: 250 80% 60%;
+    --chart-2: 260 70% 58%;
+    --chart-3: 170 70% 45%;
+    --chart-4: 280 70% 55%;
+    --chart-5: 330 70% 55%;
+    --sidebar-background: 225 20% 8%;
+    --sidebar-foreground: 220 20% 90%;
+    --sidebar-primary: 250 80% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 225 15% 14%;
+    --sidebar-accent-foreground: 220 20% 90%;
+    --sidebar-border: 225 15% 18%;
+    --sidebar-ring: 250 80% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  html {
+    overscroll-behavior: none;
+  }
+}
+
+/* Safe area padding */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+
+/* User select none for nav elements */
+nav, [data-nav], .nav-item {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Minimum tap targets — exclude leaflet map internals */
+button, a, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.leaflet-container button,
+.leaflet-container a,
+.leaflet-container [role="button"],
+.leaflet-container img {
+  min-height: unset;
+  min-width: unset;
+}
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+  min-height: unset !important;
+  min-width: unset !important;
+}
+
+/* Leaflet map overrides for dark theme */
+.leaflet-container {
+  background: hsl(225, 25%, 6%) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: hsl(225, 20%, 12%) !important;
+  color: hsl(220, 20%, 90%) !important;
+  border-radius: 10px !important;
+  border: 1px solid hsl(225, 15%, 20%) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.leaflet-popup-tip {
+  background: hsl(225, 20%, 12%) !important;
+}
+
+.leaflet-popup-close-button {
+  color: hsl(220, 10%, 55%) !important;
+}
+
+.leaflet-control-zoom a {
+  background: hsl(225, 20%, 12%) !important;
+  color: hsl(220, 20%, 90%) !important;
+  border-color: hsl(225, 15%, 20%) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: hsl(225, 15%, 18%) !important;
+}
+
+.leaflet-control-attribution {
+  background: hsl(225, 20%, 8%, 0.8) !important;
+  color: hsl(220, 10%, 40%) !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: hsl(250, 80%, 60%) !important;
+}

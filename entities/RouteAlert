@@ -1,0 +1,51 @@
+{
+  "name": "RouteAlert",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "traffic",
+        "flood",
+        "accident",
+        "roadblock",
+        "weather",
+        "construction"
+      ],
+      "description": "Tipo do alerta"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "reported_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "title"
+  ]
+}
