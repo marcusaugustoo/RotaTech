@@ -148,10 +148,10 @@ export default function DriverArea() {
         <TabsContent value="map">
           <div className="space-y-4">
             <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" /> Entregue</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-accent inline-block" /> Em trânsito</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-primary inline-block" /> Pendente</span>
-              <span className="flex items-center gap-1.5 ml-auto text-muted-foreground">— Rota tracejada</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" /> Entregue</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-orange-500 inline-block" /> Em trânsito</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-slate-400 inline-block" /> Pendente</span>
+              <span className="flex items-center gap-1.5 ml-auto text-muted-foreground">— Caminho a seguir</span>
             </div>
             {todayDeliveries.length === 0 ? (
               <div className="text-center py-16 text-muted-foreground rounded-xl border border-border bg-card">

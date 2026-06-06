@@ -1,11 +1,11 @@
 const today = new Date().toISOString().split("T")[0];
 
 let deliveries = [
-  { id: 1, date: today, status: "pending", recipient: "João Silva", recipient_name: "João Silva", address: "Rua Paranaíba, 1230", latitude: -20.7849, longitude: -51.7011, order_in_route: 1, estimated_time: "08:30" },
+  { id: 1, date: today, status: "delivered", recipient: "João Silva", recipient_name: "João Silva", address: "Rua Paranaíba, 1230", latitude: -20.7849, longitude: -51.7011, order_in_route: 1, delivered_at: new Date().toISOString(), estimated_time: "08:30" },
   { id: 2, date: today, status: "delivered", recipient: "Maria Paula", recipient_name: "Maria Paula", address: "Av. Antônio Trajano, 450", latitude: -20.7800, longitude: -51.7100, order_in_route: 2, delivered_at: new Date().toISOString(), estimated_time: "09:15" },
   { id: 3, date: today, status: "in_transit", recipient: "Carlos Mendes", recipient_name: "Carlos Mendes", address: "Rua Olinto Mancini, 78", latitude: -20.7870, longitude: -51.6950, order_in_route: 3, estimated_time: "10:00" },
   { id: 4, date: today, status: "pending", recipient: "Ana Beatriz", recipient_name: "Ana Beatriz", address: "Rua Elmano Soares, 320", latitude: -20.7920, longitude: -51.7080, order_in_route: 4, estimated_time: "10:45" },
-  { id: 5, date: today, status: "delivered", recipient: "Fernando Gomes", recipient_name: "Fernando Gomes", address: "Av. Capitão Olinto Mancini, 1500", latitude: -20.7780, longitude: -51.7040, order_in_route: 5, delivered_at: new Date().toISOString(), estimated_time: "11:30" }
+  { id: 5, date: today, status: "pending", recipient: "Fernando Gomes", recipient_name: "Fernando Gomes", address: "Av. Capitão Olinto Mancini, 1500", latitude: -20.7780, longitude: -51.7040, order_in_route: 5, estimated_time: "11:30" }
 ];
 
 let alerts = [

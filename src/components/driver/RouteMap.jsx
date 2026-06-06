@@ -13,9 +13,9 @@ L.Icon.Default.mergeOptions({
 });
 
 const statusColors = {
-  delivered: "#10b981",
-  in_transit: "#a78bfa",
-  pending: "#6366f1",
+  delivered: "#10b981", // Green
+  in_transit: "#f97316", // Vibrant Orange
+  pending: "#94a3b8", // Slate/Gray
   failed: "#ef4444",
 };
 
@@ -140,7 +140,13 @@ export default function RouteMap({ deliveries }) {
 
   const withCoords = deliveries.filter(d => d.latitude && d.longitude);
   const positions = withCoords.map(d => [d.latitude, d.longitude]);
-  const streetPath = useRealRoute(positions);
+  
+  // Apenas as entregas que ainda faltam ser concluídas
+  const activeDeliveries = withCoords.filter(d => d.status !== "delivered");
+  const activePositions = activeDeliveries.map(d => [d.latitude, d.longitude]);
+  
+  // Rota calculada apenas para os pontos restantes
+  const streetPath = useRealRoute(activePositions);
   
   const center = positions.length > 0 
     ? [positions[0][0], positions[0][1]] 
@@ -214,9 +220,9 @@ export default function RouteMap({ deliveries }) {
           </Marker>
         ))}
         {/* Marcador do Motorista (Simulando posição atual) */}
-        {streetPath.length > 0 && (
+        {activePositions.length > 0 && (
           <Marker
-            position={streetPath[Math.floor(streetPath.length * 0.35)]}
+            position={streetPath.length > 0 ? streetPath[0] : activePositions[0]}
             icon={createDriverIcon()}
             zIndexOffset={1000}
           >
