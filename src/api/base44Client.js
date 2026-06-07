@@ -51,11 +51,29 @@ export const base44 = {
   entities: {
     Delivery: {
       list: async () => { await delay(500); return [...deliveries]; },
+      create: async (data) => { 
+        await delay(300);
+        const newDelivery = { 
+          id: Date.now(), 
+          date: today, 
+          status: "pending", 
+          recipient_name: "Novo Destino (Simulado)",
+          address: "Endereço do Mapa",
+          ...data 
+        };
+        deliveries.push(newDelivery);
+        return newDelivery;
+      },
       update: async (id, data) => { 
         await delay(300);
         const idx = deliveries.findIndex(d => d.id === id);
         if (idx !== -1) deliveries[idx] = { ...deliveries[idx], ...data };
         return deliveries[idx];
+      },
+      delete: async (id) => {
+        await delay(300);
+        deliveries = deliveries.filter(d => d.id !== id);
+        return true;
       }
     },
     RouteAlert: {

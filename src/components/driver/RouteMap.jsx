@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, Circle, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 
 // Fix leaflet default icons
@@ -132,7 +132,18 @@ function RecenterButton({ center, positions }) {
   );
 }
 
-export default function RouteMap({ deliveries }) {
+function MapClickHandler({ isAdding, onAdd }) {
+  useMapEvents({
+    click(e) {
+      if (isAdding && onAdd) {
+        onAdd(e.latlng.lat, e.latlng.lng);
+      }
+    }
+  });
+  return null;
+}
+
+export default function RouteMap({ deliveries, isAddingAlertMode, onAddAlert, qualitativeRouting, onMarkerClick, onDeleteAlert }) {
   const { data: alerts = [] } = useQuery({
     queryKey: ["map-alerts"],
     queryFn: () => base44.entities.RouteAlert.filter({ active: true }, "-created_date", 50),
@@ -145,8 +156,65 @@ export default function RouteMap({ deliveries }) {
   const activeDeliveries = withCoords.filter(d => d.status !== "delivered");
   const activePositions = activeDeliveries.map(d => [d.latitude, d.longitude]);
   
-  // Rota calculada apenas para os pontos restantes
-  const streetPath = useRealRoute(activePositions);
+  let finalPositions = [...activePositions];
+
+  if (qualitativeRouting && alerts.length > 0) {
+    let newPositions = [];
+    for (let i = 0; i < activePositions.length; i++) {
+       newPositions.push(activePositions[i]);
+       if (i < activePositions.length - 1) {
+          const p1 = activePositions[i];
+          const p2 = activePositions[i+1];
+          for (const alert of alerts) {
+             const distP1 = Math.hypot(p1[0] - alert.latitude, p1[1] - alert.longitude);
+             const distP2 = Math.hypot(p2[0] - alert.latitude, p2[1] - alert.longitude);
+             const alertRadiusDegrees = 0.0025; // ~250m
+             
+             // Se o destino ou origem estiver DENTRO do alerta, não temos como desviar!
+             if (distP1 < alertRadiusDegrees || distP2 < alertRadiusDegrees) continue;
+             
+             // Verifica se a reta entre p1 e p2 cruza a área de alerta
+             const dx = p2[0] - p1[0];
+             const dy = p2[1] - p1[1];
+             const len2 = dx*dx + dy*dy;
+             if (len2 === 0) continue;
+             
+             let param = ((alert.latitude - p1[0]) * dx + (alert.longitude - p1[1]) * dy) / len2;
+             param = Math.max(0, Math.min(1, param));
+             
+             const closestX = p1[0] + param * dx;
+             const closestY = p1[1] + param * dy;
+             
+             const distToLine = Math.hypot(closestX - alert.latitude, closestY - alert.longitude);
+             
+             if (distToLine < alertRadiusDegrees) {
+                const len = Math.sqrt(len2);
+                let px = -dy / len;
+                let py = dx / len;
+                
+                const cx = closestX - alert.latitude;
+                const cy = closestY - alert.longitude;
+                
+                // Força o desvio para o lado oposto ao centro do alerta
+                if (px * cx + py * cy < 0) {
+                   px = -px;
+                   py = -py;
+                }
+                
+                const detourDist = alertRadiusDegrees * 1.5;
+                newPositions.push([
+                   alert.latitude + px * detourDist,
+                   alert.longitude + py * detourDist
+                ]);
+             }
+          }
+       }
+    }
+    finalPositions = newPositions;
+  }
+
+  // Rota calculada via OSRM com desvios incluídos
+  const streetPath = useRealRoute(finalPositions);
   
   const center = positions.length > 0 
     ? [positions[0][0], positions[0][1]] 
@@ -164,6 +232,8 @@ export default function RouteMap({ deliveries }) {
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         
+        <MapClickHandler isAdding={isAddingAlertMode} onAdd={onAddAlert} />
+
         {/* Renderização dos problemas na cidade (Alertas) */}
         {alerts.map(alert => (
           <Circle
@@ -179,7 +249,18 @@ export default function RouteMap({ deliveries }) {
             <Popup>
               <div>
                 <p style={{ fontWeight: "bold", marginBottom: 4 }}>{alert.title}</p>
-                <p style={{ fontSize: 12 }}>{alert.description}</p>
+                <p style={{ fontSize: 12, marginBottom: 8 }}>{alert.description}</p>
+                {onDeleteAlert && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteAlert(alert.id);
+                    }}
+                    style={{ background: "#ef4444", color: "white", border: "none", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", cursor: "pointer", width: "100%", marginTop: "4px" }}
+                  >
+                    Resolver Problema
+                  </button>
+                )}
               </div>
             </Popup>
           </Circle>
@@ -204,19 +285,28 @@ export default function RouteMap({ deliveries }) {
             key={d.id}
             position={[d.latitude, d.longitude]}
             icon={createNumberedIcon(i + 1, statusColors[d.status] || "#6366f1")}
+            eventHandlers={{
+              click: () => {
+                if (onMarkerClick) {
+                  onMarkerClick(d);
+                }
+              }
+            }}
           >
-            <Popup>
-              <div style={{ minWidth: 160 }}>
-                <p style={{ fontWeight: "bold", marginBottom: 4 }}>{d.recipient_name}</p>
-                <p style={{ fontSize: 12, color: "#666" }}>{d.address}</p>
-                {d.estimated_time && (
-                  <p style={{ fontSize: 12, marginTop: 4 }}>⏱ {d.estimated_time}</p>
-                )}
-                <p style={{ fontSize: 11, marginTop: 4, color: statusColors[d.status] }}>
-                  ● {d.status === "delivered" ? "Entregue" : d.status === "in_transit" ? "Em trânsito" : "Pendente"}
-                </p>
-              </div>
-            </Popup>
+            {!onMarkerClick && (
+              <Popup>
+                <div style={{ minWidth: 160 }}>
+                  <p style={{ fontWeight: "bold", marginBottom: 4 }}>{d.recipient_name}</p>
+                  <p style={{ fontSize: 12, color: "#666" }}>{d.address}</p>
+                  {d.estimated_time && (
+                    <p style={{ fontSize: 12, marginTop: 4 }}>⏱ {d.estimated_time}</p>
+                  )}
+                  <p style={{ fontSize: 11, marginTop: 4, color: statusColors[d.status] }}>
+                    ● {d.status === "delivered" ? "Entregue" : d.status === "in_transit" ? "Em trânsito" : "Pendente"}
+                  </p>
+                </div>
+              </Popup>
+            )}
           </Marker>
         ))}
         {/* Marcador do Motorista (Simulando posição atual) */}
